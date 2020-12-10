@@ -62,26 +62,9 @@ def _snap():
 
 
 @command
-def _add():
-    """Manually add a new item."""
-    from fridgeai import inventory
-    label = input("Enter item name: ")
-    inventory.add(label)
-
-
-@command
-def _list():
-    """List all stored items."""
-    from fridgeai import inventory
-    print("Currently stored items:")
-    for i, item in enumerate(inventory.list()):
-        print("{}. {}".format(i + 1, item))
-
-
-@command
 def _scan():
     """Scan a new item using webcam."""
-    from fridgeai import inventory, camera, ai
+    from fridgeai import camera, ai
     while True:
         print("Scanning...")
         label = ai.predict(camera.get_frames((32, 32), count=5, interval=5))
@@ -89,7 +72,7 @@ def _scan():
 
         option = input("[s]ave, [r]escan or [c]ancel (default 'r'): ")
         if option == "s":
-            inventory.add(label)
+            # add to database
             break
         elif option == "c":
             break

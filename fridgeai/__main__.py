@@ -10,6 +10,6 @@ else:
     app = QtWidgets.QApplication(sys.argv)
     fridgeai_window = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
-    ui.setup(fridgeai_window)
+    ui.setupUi(fridgeai_window)
     fridgeai_window.show()
     sys.exit(app.exec_())
