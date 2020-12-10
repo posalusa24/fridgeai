@@ -6,11 +6,8 @@ Function name must have an underscore in front.
 Function docstring optionally defines a help statement for your command, which
 is displayed by the 'help' command.
 """
-from fridgeai import inventory, camera, ai, training
 import cv2
 import os
-import shutil
-import threading
 
 available_commands = {}
 
@@ -36,6 +33,8 @@ def command(func):
 @command
 def _sync():
     """Sync database in background."""
+    import threading
+    from fridgeai import training
     thread = threading.Thread(target=training.model_sync)
     thread.daemon = True
     thread.start()
@@ -44,6 +43,8 @@ def _sync():
 @command
 def _train():
     """Train a new item."""
+    import shutil
+    from fridgeai import camera, training
     frames = camera.get_frames(shape=(32, 32), count=100, interval=2)
     label = input("Enter item name: ")
     os.mkdir(label)
@@ -56,12 +57,14 @@ def _train():
 @command
 def _snap():
     """Do a dummy scan."""
+    from fridgeai import camera
     camera.get_frames(shape=(32, 32), count=5, interval=5)
 
 
 @command
 def _add():
     """Manually add a new item."""
+    from fridgeai import inventory
     label = input("Enter item name: ")
     inventory.add(label)
 
@@ -69,6 +72,7 @@ def _add():
 @command
 def _list():
     """List all stored items."""
+    from fridgeai import inventory
     print("Currently stored items:")
     for i, item in enumerate(inventory.list()):
         print("{}. {}".format(i + 1, item))
@@ -77,6 +81,7 @@ def _list():
 @command
 def _scan():
     """Scan a new item using webcam."""
+    from fridgeai import inventory, camera, ai
     while True:
         print("Scanning...")
         label = ai.predict(camera.get_frames((32, 32), count=5, interval=5))

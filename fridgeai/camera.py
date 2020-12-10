@@ -1,12 +1,5 @@
-import platform
-import cv2
-import time
-if platform.machine() == "armv6l":
-    import picamera
-    import picamera.array
-
-
 def get_frames(shape, count, interval):
+    import platform
     if platform.machine() == "armv6l":
         print("This is a Pi! Using picamera...")
         return _get_frames_picamera(shape, count, interval)
@@ -15,31 +8,31 @@ def get_frames(shape, count, interval):
 
 
 def _get_frames_picamera(shape, count, interval):
+    import picamera
+    import picamera.array
+    import time
+
     frames = []
 
     with picamera.PiCamera() as camera:
-        with picamera.array.PiRGBArray(camera, size=(32, 32)) as output:
-            camera.resolution = (480, 640)
+        with picamera.array.PiRGBArray(camera, size=shape) as output:
+            camera.resolution = (128, 128)
             camera.start_preview()
             for i, frame in enumerate(camera.capture_continuous(
-                output, resize=(32, 32), format="bgr", use_video_port=True
+                output, resize=shape, format="bgr", use_video_port=True
             )):
-                # output=output.reshape(32,32,3)
-                # frame = cv2.resize(
-                #     frame.array, (32,32), interpolation=cv2.INTER_AREA
-                # )
-                frames.append(frame)
-                print(frame.shape)
-                if i == 8:
+                frames.append(frame.array)
+                if i == count:
                     break
                 output.truncate(0)
-                time.sleep(0.4)
+                time.sleep(interval)
             camera.stop_preview()
 
     return frames
 
 
 def _get_frames_webcam(shape, count, interval):
+    import cv2
     frames = []
 
     cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
