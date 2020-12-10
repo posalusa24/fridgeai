@@ -10,6 +10,11 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from fridgeai import camera, ai
+import sqlite3
+import os
+import json
+from datetime import date, timedelta
+from random import randint
 
 
 class Ui_predict(object):
@@ -96,7 +101,23 @@ class Ui_predict(object):
         self.Cancel.setText(_translate("MainWindow", "Cancel"))
 
     def addItem(self, Form):
-        print("add")
+        conn = sqlite3.connect(os.path.join('data', 'item.db'))
+        c = conn.cursor()
+        today_date = date.today()
+        with open(os.path.join('data', 'expiry.json'), 'r') as file:
+            expiry_dates = json.load(file)
+        try:
+            expired = expiry_dates[self.label_3.text()]
+        except KeyError:
+            expired = 10
+        delta = timedelta(days=int(expired))
+        calc_date = today_date+delta
+        range_start = 10**(2-1)
+        range_end = (10**2)-1
+        id = randint(range_start, range_end)
+        item = (id, self.label_3.text(), date.today(), calc_date)
+        c.execute('insert into Inventory values (?,?,?,?)', item)
+        conn.commit()
         Form.hide()
 
     def closeWindow(self, Form):

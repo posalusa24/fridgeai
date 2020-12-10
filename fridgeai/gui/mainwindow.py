@@ -210,19 +210,3 @@ class Ui_MainWindow(object):
         self.ui = Ui_List()
         self.ui.setupUi(self.MainWindow)
         self.MainWindow.show()
-
-    def scanObject(self):
-        while True:
-            print("Scanning...")
-            label = ai.predict(camera.get_frames(
-                (32, 32),
-                count=5,
-                interval=5))
-            print("Scan result: {}".format(label))
-            self.prediction = label
-            break
-        self.MainWindow = QtWidgets.QMainWindow()
-        self.ui = Ui_predict()
-        self.ui.setupUi1(self.MainWindow)
-        self.ui.prediction.setText(label)
-        self.MainWindow.show()
