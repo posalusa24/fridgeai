@@ -36,7 +36,7 @@ def send_training_data(images_folder_path):
     zipfile_path = os.path.basename(images_folder_path) + '.zip'
 
     _create_zipfile(images_folder_path, zipfile_path)
-    _post_file(zipfile_path, 'http://127.0.0.1:8000/upload')
+    _post_file(zipfile_path, 'http://fridgeai.my.to:8000/upload')
     os.remove(zipfile_path)
 
 
