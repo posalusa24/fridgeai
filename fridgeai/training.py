@@ -41,8 +41,6 @@ def send_training_data(images_folder_path):
 
 
 def model_sync():
-    if not os.path.exists(MODEL_FOLDER):
-        os.mkdir(MODEL_FOLDER)
     while True:
         tflites = [
             file for file in _listFD('http://fridgeai.my.to:8000')
@@ -71,4 +69,7 @@ def model_sync():
             with open(os.path.join(MODEL_FOLDER, 'labels.json'), 'wb') as file:
                 res = requests.get('http://fridgeai.my.to:8000/labels.json')
                 file.write(res.content)
-        time.sleep(5)
+            print('UPDATE DONE')
+        else:
+            print('No updates found.')
+        time.sleep(10)

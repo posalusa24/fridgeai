@@ -120,6 +120,24 @@ class Ui_MainWindow(object):
         self.pressure_icon.setText("")
         self.pressure_icon.setPixmap(QtGui.QPixmap(os.path.join("data", "pressure-64.png")))
         self.pressure_icon.setObjectName("pressure_icon")
+        self.Water = QtWidgets.QPushButton(self.centralwidget)
+        self.Water.setGeometry(QtCore.QRect(10, 10, 41, 41))
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.Water.setFont(font)
+        self.Water.setStyleSheet("QPushButton {\n""    color: #FFFFFF;\n" "\n" "    border: 4px solid #FFFFFF;\n"
+                                 "    border-radius: 20;\n"
+                                 "    }\n"
+                                 "")
+        self.Water.setText("")
+        self.Water.setObjectName("Water")
+
+        self.label = QtWidgets.QLabel(self.centralwidget)
+        self.label.setGeometry(QtCore.QRect(60, 20, 81, 21))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.label.setFont(font)
+        self.label.setObjectName("label")
         self.learn = QtWidgets.QPushButton(self.centralwidget)
         self.learn.setGeometry(QtCore.QRect(700, 460, 100, 100))
         font = QtGui.QFont()
@@ -180,6 +198,8 @@ class Ui_MainWindow(object):
             "MainWindow", "<html><head/><body><p><span style=\" color:#ffffff;\">37*F</span></p></body></html>"))
         self.gas.setText(_translate(
             "MainWindow", "<html><head/><body><p><span style=\" color:#ffffff;\">2.4psi</span></p></body></html>"))
+        self.label.setText(_translate(
+            "MainWindow", "<html><head/><body><p><span style=\" color:#ffffff;\">Leakage</span></p></body></html>"))
         self.Add.setText(_translate("MainWindow", "Add"))
         self.learn.setText(_translate("MainWindow", "Learn"))
         self.Manual.setText(_translate("MainWindow", "Manual"))
