@@ -25,7 +25,7 @@ def _get_frames_picamera(shape, count, interval):
                 if i == count:
                     break
                 output.truncate(0)
-                time.sleep(interval)
+                time.sleep(interval / 10)
             camera.stop_preview()
 
     return frames
