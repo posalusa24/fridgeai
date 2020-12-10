@@ -14,7 +14,6 @@ import sqlite3
 import os
 import json
 from datetime import date, timedelta
-from random import randint
 
 
 class Ui_predict(object):
@@ -93,9 +92,7 @@ class Ui_predict(object):
             "MainWindow", "<html><head/><body><p>"
             "<span style=\" color:#fefefe;\">Would you like to add</span>"
             "</p></body></html>"))
-        self.label_3.setText(_translate(
-            "MainWindow", "<html><head/><body><p>"
-            "<span style=\" color:#fefefe;\"></span>""</p></body></html>"))
+        self.label_3.setText("")
         self.Add.setText(_translate("MainWindow", "Add"))
         self.Rescan.setText(_translate("MainWindow", "Rescan"))
         self.Cancel.setText(_translate("MainWindow", "Cancel"))
@@ -112,11 +109,10 @@ class Ui_predict(object):
             expired = 10
         delta = timedelta(days=int(expired))
         calc_date = today_date+delta
-        range_start = 10**(2-1)
-        range_end = (10**2)-1
-        id = randint(range_start, range_end)
-        item = (id, self.label_3.text(), date.today(), calc_date)
-        c.execute('insert into Inventory values (?,?,?,?)', item)
+        item = (self.label_3.text(), date.today(), calc_date)
+        c.execute(
+            'insert into Inventory (name, start_date, end_date)'
+            ' values (?,?,?)', item)
         conn.commit()
         Form.hide()
 
@@ -132,8 +128,4 @@ class Ui_predict(object):
                 interval=5))
             print("Scan result: {}".format(item))
             break
-        _translate = QtCore.QCoreApplication.translate
-        self.label_3.setText(_translate(
-            "MainWindow", "<html><head/><body><p>"
-            "<span style=\" color:#fefefe;\">{}</span>".format(item) +
-            "</p></body></html>"))
+        self.label_3.setText(item)

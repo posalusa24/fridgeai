@@ -6,6 +6,7 @@ from fridgeai.gui.manual import Ui_Manual
 from fridgeai.gui.predict import Ui_predict
 from fridgeai.gui.testing import Ui_List
 from fridgeai.gui.learn import Ui_Learn
+from datetime import date
 
 
 class Ui_MainWindow(object):
@@ -59,7 +60,7 @@ class Ui_MainWindow(object):
         self.tableWidget.setFont(font)
         self.tableWidget.setStyleSheet("QTableWidget {background: #98ADAA; color: #FFFFFF; }")
         self.tableWidget.setObjectName("tableWidget")
-        self.tableWidget.setColumnCount(1)
+        self.tableWidget.setColumnCount(4)
         self.tableWidget.setRowCount(10)
         self.tableWidget.horizontalHeader().setVisible(False)
         self.tableWidget.horizontalHeader().setHighlightSections(False)
@@ -172,16 +173,20 @@ class Ui_MainWindow(object):
         self.Manual.clicked.connect(self.addManual)
         self.ListButton.clicked.connect(self.showInventory)
         connection = sqlite3.connect(os.path.join('data', 'item.db'))
-        query = "SELECT name FROM Inventory"
+        query = "SELECT name,end_date FROM Inventory"
         result = connection.execute(query)
-        # self.ListButton.clicked.connect(self.test)
+        #self.ListButton.clicked.connect(self.test)
         self.tableWidget.setRowCount(0)
+        count = 0
         for row_number, row_data in enumerate(result):
             self.tableWidget.insertRow(row_number)
+            count=count+1
             for colum_number, data in enumerate(row_data):
-                self.tableWidget.setItem(row_number, colum_number,
-                                         QtWidgets.QTableWidgetItem(str(data)))
+                self.tableWidget.setItem(row_number, colum_number, QtWidgets.QTableWidgetItem(str(data)))
                 self.tableWidget.setColumnWidth(colum_number, 1000)
+        for num in range(count):
+            if(str(self.tableWidget.item(num,1).text()) == str(date.today())):
+                self.tableWidget.item(num,0).setBackground(QtGui.QColor(246,77,77))
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.reload)
         self.timer.setInterval(1000)
@@ -215,16 +220,20 @@ class Ui_MainWindow(object):
 
     def reload(self):
         connection = sqlite3.connect(os.path.join('data', 'item.db'))
-        query = "SELECT name FROM Inventory"
+        query = "SELECT name,end_date FROM Inventory"
         result = connection.execute(query)
-        # self.ListButton.clicked.connect(self.test)
+        #self.ListButton.clicked.connect(self.test)
         self.tableWidget.setRowCount(0)
+        count = 0
         for row_number, row_data in enumerate(result):
             self.tableWidget.insertRow(row_number)
+            count=count+1
             for colum_number, data in enumerate(row_data):
-                self.tableWidget.setItem(row_number, colum_number,
-                                         QtWidgets.QTableWidgetItem(str(data)))
+                self.tableWidget.setItem(row_number, colum_number, QtWidgets.QTableWidgetItem(str(data)))
                 self.tableWidget.setColumnWidth(colum_number, 1000)
+        for num in range(count):
+            if(str(self.tableWidget.item(num,1).text()) == str(date.today())):
+                self.tableWidget.item(num,0).setBackground(QtGui.QColor(246,77,77))
 
     def learnItem(self):
         self.MainWindow = QtWidgets.QMainWindow()

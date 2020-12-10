@@ -9,7 +9,6 @@
 import os
 from PyQt5 import QtCore, QtGui, QtWidgets
 import sqlite3
-from random import randint
 from datetime import date, timedelta
 
 
@@ -97,11 +96,6 @@ class Ui_Manual(object):
             "<span style=\" color:#ffffff;\">Lifespan :</span>"
             "</p></body></html>"))
 
-    def random_with_N_digits(n):
-        range_start = 10**(n-1)
-        range_end = (10**n)-1
-        return randint(range_start, range_end)
-
     def addItem(self, Form):
         print("Item added manually")
         conn = sqlite3.connect(os.path.join('data', 'item.db'))
@@ -110,11 +104,10 @@ class Ui_Manual(object):
         expired = self.Lifespan.text()
         delta = timedelta(days=int(expired))
         calc_date = today_date+delta
-        range_start = 10**(2-1)
-        range_end = (10**2)-1
-        id = randint(range_start, range_end)
-        item = (id, self.Item.text(), date.today(), calc_date)
-        c.execute('insert into Inventory values (?,?,?,?)', item)
+        item = (self.Item.text(), date.today(), calc_date)
+        c.execute(
+            'insert into Inventory (name, start_date, end_date)'
+            ' values (?,?,?)', item)
         conn.commit()
         Form.hide()
 
