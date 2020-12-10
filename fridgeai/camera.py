@@ -3,6 +3,7 @@ import cv2
 import time
 if platform.machine() == "armv6l":
     import picamera
+    import picamera.array
 
 
 def get_frames(shape, count, interval):
