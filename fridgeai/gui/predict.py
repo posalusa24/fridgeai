@@ -132,4 +132,8 @@ class Ui_predict(object):
                 interval=5))
             print("Scan result: {}".format(item))
             break
-        self.label_3.setText(item)
+        _translate = QtCore.QCoreApplication.translate
+        self.label_3.setText(_translate(
+            "MainWindow", "<html><head/><body><p>"
+            "<span style=\" color:#fefefe;\">{}</span>".format(item) +
+            "</p></body></html>"))

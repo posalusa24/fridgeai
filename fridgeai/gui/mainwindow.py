@@ -5,6 +5,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from fridgeai.gui.manual import Ui_Manual
 from fridgeai.gui.predict import Ui_predict
 from fridgeai.gui.testing import Ui_List
+from fridgeai.gui.learn import Ui_Learn
 
 
 class Ui_MainWindow(object):
@@ -16,8 +17,8 @@ class Ui_MainWindow(object):
         self.wallpaper = QtWidgets.QLabel(self.centralwidget)
         self.wallpaper.setGeometry(QtCore.QRect(-7, -5, 1931, 1080))
         self.wallpaper.setStyleSheet("QLabel{\n"
-                                     "    background-color:\"#1D283D\"\n"
-                                     "}")
+"    background-color:\"#1D283D\"\n"
+"}")
         self.wallpaper.setText("")
         self.wallpaper.setObjectName("wallpaper")
         self.inventory_wallpaper = QtWidgets.QLabel(self.centralwidget)
@@ -47,16 +48,25 @@ class Ui_MainWindow(object):
         self.vector = QtWidgets.QLabel(self.centralwidget)
         self.vector.setGeometry(QtCore.QRect(90, 140, 341, 2))
         self.vector.setStyleSheet("QLabel{\n"
-                                  "background-color:black\n"
-                                  "}")
+"background-color:black\n"
+"}")
         self.vector.setText("")
         self.vector.setObjectName("vector")
         self.tableWidget = QtWidgets.QTableWidget(self.centralwidget)
         self.tableWidget.setGeometry(QtCore.QRect(90, 160, 341, 411))
-        self.tableWidget.setStyleSheet("QTableWidget {background: #98ADAA}")
+        font = QtGui.QFont()
+        font.setPointSize(22)
+        self.tableWidget.setFont(font)
+        self.tableWidget.setStyleSheet("QTableWidget {background: #98ADAA; color: #FFFFFF; }")
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setColumnCount(1)
         self.tableWidget.setRowCount(10)
+        self.tableWidget.horizontalHeader().setVisible(False)
+        self.tableWidget.horizontalHeader().setHighlightSections(False)
+        self.tableWidget.verticalHeader().setVisible(False)
+        self.tableWidget.verticalHeader().setHighlightSections(False)
+        self.tableWidget.setShowGrid(False)
+
 
         self.Time = QtWidgets.QLabel(self.centralwidget)
         self.Time.setGeometry(QtCore.QRect(600, 20, 291, 151))
@@ -82,34 +92,35 @@ class Ui_MainWindow(object):
         font.setPointSize(14)
         self.Add.setFont(font)
         self.Add.setStyleSheet("QPushButton {\n"
-                               "    color: #FFFFFF;\n"
-                               "    border: 4px solid #FFFFFF;\n"
-                               "    border-radius: 50;\n"
-                               "    }\n"
-                               "")
+"    color: #FFFFFF;\n"
+"    border: 4px solid #FFFFFF;\n"
+"    border-radius: 50;\n"
+"    }\n"
+"")
         self.ListButton = QtWidgets.QPushButton(self.centralwidget)
         self.ListButton.setGeometry(QtCore.QRect(90, 160, 341, 411))
         font = QtGui.QFont()
         font.setPointSize(14)
         self.ListButton.setFont(font)
         self.ListButton.setStyleSheet("QPushButton {\n"
-                                      "    \n"
-                                      "    border: 0.1px solid #FFFFFF;\n"
-                                      "   \n"
-                                      "    }\n"
-                                      "")
+"    \n"
+"    border: 0.1px solid #FFFFFF;\n"
+"   \n"
+"    }\n"
+"")
         self.ListButton.setText("")
         self.ListButton.setObjectName("ListButton")
+
 
         self.temperature_icon = QtWidgets.QLabel(self.centralwidget)
         self.temperature_icon.setGeometry(QtCore.QRect(550, 210, 101, 71))
         self.temperature_icon.setText("")
-        self.temperature_icon.setPixmap(QtGui.QPixmap(os.path.join("data", "temperature-2-64.png")))
+        self.temperature_icon.setPixmap(QtGui.QPixmap("./temperature-2-64.png"))
         self.temperature_icon.setObjectName("temperature_icon")
         self.pressure_icon = QtWidgets.QLabel(self.centralwidget)
         self.pressure_icon.setGeometry(QtCore.QRect(550, 320, 71, 71))
         self.pressure_icon.setText("")
-        self.pressure_icon.setPixmap(QtGui.QPixmap(os.path.join("data", "pressure-64.png")))
+        self.pressure_icon.setPixmap(QtGui.QPixmap("./pressure-64.png"))
         self.pressure_icon.setObjectName("pressure_icon")
         self.learn = QtWidgets.QPushButton(self.centralwidget)
         self.learn.setGeometry(QtCore.QRect(700, 460, 100, 100))
@@ -117,11 +128,11 @@ class Ui_MainWindow(object):
         font.setPointSize(12)
         self.learn.setFont(font)
         self.learn.setStyleSheet("QPushButton {\n"
-                                 "    color: #FFFFFF;\n"
-                                 "    border: 4px solid #FFFFFF;\n"
-                                 "    border-radius: 50;\n"
-                                 "    }\n"
-                                 "")
+"    color: #FFFFFF;\n"
+"    border: 4px solid #FFFFFF;\n"
+"    border-radius: 50;\n"
+"    }\n"
+"")
         self.learn.setObjectName("Learn")
         self.Manual = QtWidgets.QPushButton(self.centralwidget)
         self.Manual.setGeometry(QtCore.QRect(860, 460, 100, 100))
@@ -129,11 +140,11 @@ class Ui_MainWindow(object):
         font.setPointSize(14)
         self.Manual.setFont(font)
         self.Manual.setStyleSheet("QPushButton {\n"
-                                  "    color: #FFFFFF;\n"
-                                  "    border: 4px solid #FFFFFF;\n"
-                                  "    border-radius: 50;\n"
-                                  "    }\n"
-                                  "")
+"    color: #FFFFFF;\n"
+"    border: 4px solid #FFFFFF;\n"
+"    border-radius: 50;\n"
+"    }\n"
+"")
         self.Manual.setObjectName("Manual")
         MainWindow.setCentralWidget(self.centralwidget)
 
@@ -147,14 +158,13 @@ class Ui_MainWindow(object):
         connection = sqlite3.connect(os.path.join('data', 'item.db'))
         query = "SELECT name FROM Inventory"
         result = connection.execute(query)
-        # self.ListButton.clicked.connect(self.test)
+        #self.ListButton.clicked.connect(self.test)
         self.tableWidget.setRowCount(0)
         for row_number, row_data in enumerate(result):
             self.tableWidget.insertRow(row_number)
             for colum_number, data in enumerate(row_data):
-                self.tableWidget.setItem(row_number, colum_number,
-                                         QtWidgets.QTableWidgetItem(str(data)))
-
+                self.tableWidget.setItem(row_number, colum_number, QtWidgets.QTableWidgetItem(str(data)))
+                self.tableWidget.setColumnWidth(colum_number, 1000)
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.reload)
         self.timer.setInterval(1000)
@@ -188,16 +198,19 @@ class Ui_MainWindow(object):
         connection = sqlite3.connect(os.path.join('data', 'item.db'))
         query = "SELECT name FROM Inventory"
         result = connection.execute(query)
-        # self.ListButton.clicked.connect(self.test)
+        #self.ListButton.clicked.connect(self.test)
         self.tableWidget.setRowCount(0)
         for row_number, row_data in enumerate(result):
             self.tableWidget.insertRow(row_number)
             for colum_number, data in enumerate(row_data):
-                self.tableWidget.setItem(row_number, colum_number,
-                                         QtWidgets.QTableWidgetItem(str(data)))
+                self.tableWidget.setItem(row_number, colum_number, QtWidgets.QTableWidgetItem(str(data)))
+                self.tableWidget.setColumnWidth(colum_number, 1000)
 
     def learnItem(self):
-        print("learn")
+        self.MainWindow = QtWidgets.QMainWindow()
+        self.ui = Ui_Learn()
+        self.ui.setupUi(self.MainWindow)
+        self.MainWindow.show()
 
     def addManual(self):
         self.MainWindow = QtWidgets.QMainWindow()
