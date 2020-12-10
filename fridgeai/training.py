@@ -41,6 +41,8 @@ def send_training_data(images_folder_path):
 
 
 def model_sync():
+    if not os.path.exists(MODEL_FOLDER):
+        os.mkdir(MODEL_FOLDER)
     while True:
         tflites = [
             file for file in _listFD('http://fridgeai.my.to:8000')
