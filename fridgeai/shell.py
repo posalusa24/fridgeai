@@ -6,7 +6,11 @@ Function name must have an underscore in front.
 Function docstring optionally defines a help statement for your command, which
 is displayed by the 'help' command.
 """
-from fridgeai import inventory, camera, ai
+from fridgeai import inventory, camera, ai, training
+import cv2
+import os
+import shutil
+import threading
 
 available_commands = {}
 
@@ -29,6 +33,25 @@ def command(func):
 
 
 # Add commands here
+@command
+def _sync():
+    """Sync database in background."""
+    thread = threading.Thread(target=training.model_sync)
+    thread.daemon = True
+    thread.start()
+
+
+@command
+def _train():
+    """Train a new item."""
+    frames = camera.get_frames(shape=(32, 32), count=100, interval=2)
+    label = input("Enter item name: ")
+    os.mkdir(label)
+    for i, frame in enumerate(frames):
+        cv2.imwrite(os.path.join(label, 'frame{}.jpg'.format(i)), frame)
+    training.send_training_data(label)
+    shutil.rmtree(label)
+
 
 @command
 def _snap():

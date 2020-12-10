@@ -1,12 +1,16 @@
-from os import path
+import os
 import numpy as np
 import tensorflow as tf
+import json
 
 
 def predict(images):
+    model_path = os.path.join('data', [
+        file for file in os.listdir('data')
+        if os.path.splitext(file)[1] == '.tflite'
+    ][0])
     # Load the TFLite model and allocate tensors.
-    interpreter = tf.lite.Interpreter(
-        model_path=path.join("data", "model.tflite"))
+    interpreter = tf.lite.Interpreter(model_path=model_path)
 
     # Get input and output tensors.
     input_details = interpreter.get_input_details()
@@ -23,8 +27,10 @@ def predict(images):
     # The function `get_tensor()` returns a copy of the tensor data.
     # Use `tensor()` in order to get a pointer to the tensor.
     output_data = interpreter.get_tensor(output_details[0]['index'])
-    print(output_data)
-    return "Coke"
+    prediction = np.argmax(np.bincount(output_data.argmax(axis=1)))
+    with open(os.path.join('data', 'labels.json'), 'rb') as file:
+        item_list = json.load(file)
+    return item_list[prediction]
 
 
 """
