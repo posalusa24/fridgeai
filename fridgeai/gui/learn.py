@@ -10,6 +10,7 @@ import os
 from PyQt5 import QtCore, QtGui, QtWidgets
 import sqlite3
 from fridgeai import training, camera
+import cv2
 
 
 class Ui_Learn(object):
@@ -82,7 +83,6 @@ class Ui_Learn(object):
 
     def startLearn(self, Form):
         import shutil
-        import cv2
         frames = camera.get_frames(shape=(32, 32), count=100, interval=2)
         label = self.Item.text()
         os.mkdir(label)
