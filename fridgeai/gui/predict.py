@@ -129,3 +129,7 @@ class Ui_predict(object):
             print("Scan result: {}".format(item))
             break
         self.label_3.setText(item)
+        self.label_3.setStyleSheet("QLabel {\n"
+                               "    color: #FFFFFF;\n"
+                               "    }\n"
+                               "")
