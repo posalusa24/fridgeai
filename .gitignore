@@ -1,6 +1,7 @@
 data/item.db
 data/labels.json
 data/*.tflite
+data/expiry.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
