@@ -39,13 +39,18 @@ class MicroBlue:
 
     def _sync(self, async_loop):
         async def run():
-            async with BleakClient(self.address) as client:
-                def listener(sender, data):
-                    key, value = data.decode().split(':')
-                    self.data[key] = value
-                await client.start_notify(UART_RX, listener)
-                while self.sync_enabled:
-                    await asyncio.sleep(1)
-                await client.stop_notify(UART_RX)
+            while self.sync_enabled:
+                try:
+                    async with BleakClient(self.address) as client:
+                        def listener(sender, data):
+                            key, value = data.decode().split(':')
+                            self.data[key] = value
+                        await client.start_notify(UART_RX, listener)
+                        while self.sync_enabled:
+                            await asyncio.sleep(1)
+                        await client.stop_notify(UART_RX)
+                        break
+                except:
+                    print("Retrying microbit connection...")
         asyncio.set_event_loop(async_loop)
         async_loop.run_until_complete(run())

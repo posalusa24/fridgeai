@@ -38,9 +38,13 @@ else:
                                            "    }\n"
                                            "")
                 _translate = QtCore.QCoreApplication.translate
-                nowtime = datetime.now().strftime('%H:%M')
-                ui.Time.setText(_translate(
-                    "MainWindow", "<html><head/><body><p><span style=\" color:#ffffff;\">{} PM</span></p></body></html>".format(nowtime)))
+                if not training.is_updating():
+                    nowtime = datetime.now().strftime('%H:%M')
+                    ui.Time.setText(_translate(
+                        "MainWindow", "<html><head/><body><p><span style=\" color:#ffffff;\">{} PM</span></p></body></html>".format(nowtime)))
+                else:
+                    ui.Time.setText(_translate(
+                        "MainWindow", "<html><head/><body><p><span style=\" color:#ffffff;\">Updating</span></p></body></html>"))
                 temp = microblue.get("temperature")
                 ui.temperature.setText(_translate(
                     "MainWindow", "<html><head/><body><p><span style=\" color:#ffffff;\">{}*C</span></p></body></html>".format(temp)))

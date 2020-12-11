@@ -6,6 +6,8 @@ from bs4 import BeautifulSoup
 
 MODEL_FOLDER = 'data'
 
+updating = False
+
 
 def _create_zipfile(folder_path, zipfile_path):
     with ZipFile(zipfile_path, 'w') as zip:
@@ -17,9 +19,13 @@ def _create_zipfile(folder_path, zipfile_path):
 
 
 def _post_file(file_path, address):
-    return requests.post(address, files={
-        'file_1': open(file_path, 'rb')
-    })
+    while True:
+        try:
+            return requests.post(address, files={
+                'file_1': open(file_path, 'rb')
+            })
+        except:
+            print("Retrying send file to server...")
 
 
 def _listFD(url, ext=''):
@@ -32,6 +38,11 @@ def _listFD(url, ext=''):
     ]
 
 
+def is_updating():
+    global updating
+    return updating
+
+
 def send_training_data(images_folder_path):
     zipfile_path = os.path.basename(images_folder_path) + '.zip'
 
@@ -42,34 +53,40 @@ def send_training_data(images_folder_path):
 
 def model_sync():
     while True:
-        tflites = [
-            file for file in _listFD('http://fridgeai.my.to:8000')
-            if os.path.splitext(file)[1] == '.tflite'
-        ]
-        local_tflites = [
-            file for file in os.listdir(MODEL_FOLDER)
-            if os.path.splitext(file)[1] == '.tflite'
-        ]
-        if (
-            tflites and (
-                not local_tflites or
-                os.path.basename(tflites[0])
-                != os.path.basename(local_tflites[0])
-            )
-        ):
-            for file in local_tflites:
-                os.remove(os.path.join(MODEL_FOLDER, file))
-            model_path = os.path.join(
-                MODEL_FOLDER, os.path.basename(tflites[0])
-            )
-            print('New tflite file found. Updating...')
-            with open(model_path, 'wb') as model:
-                res = requests.get(tflites[0])
-                model.write(res.content)
-            with open(os.path.join(MODEL_FOLDER, 'labels.json'), 'wb') as file:
-                res = requests.get('http://fridgeai.my.to:8000/labels.json')
-                file.write(res.content)
-            print('UPDATE DONE')
-        else:
-            print('No updates found.')
-        time.sleep(10)
+        try:
+            tflites = [
+                file for file in _listFD('http://fridgeai.my.to:8000')
+                if os.path.splitext(file)[1] == '.tflite'
+            ]
+            local_tflites = [
+                file for file in os.listdir(MODEL_FOLDER)
+                if os.path.splitext(file)[1] == '.tflite'
+            ]
+            if (
+                tflites and (
+                    not local_tflites or
+                    os.path.basename(tflites[0])
+                    != os.path.basename(local_tflites[0])
+                )
+            ):
+                for file in local_tflites:
+                    os.remove(os.path.join(MODEL_FOLDER, file))
+                model_path = os.path.join(
+                    MODEL_FOLDER, os.path.basename(tflites[0])
+                )
+                print('New tflite file found. Updating...')
+                global updating
+                updating = True
+                with open(model_path, 'wb') as model:
+                    res = requests.get(tflites[0])
+                    model.write(res.content)
+                with open(os.path.join(MODEL_FOLDER, 'labels.json'), 'wb') as file:
+                    res = requests.get('http://fridgeai.my.to:8000/labels.json')
+                    file.write(res.content)
+                print('UPDATE DONE')
+                updating = False
+            else:
+                print('No updates found.')
+            time.sleep(10)
+        except:
+            print("Retrying model sync with server...")
